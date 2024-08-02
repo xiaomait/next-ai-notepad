@@ -23,6 +23,7 @@ import ChatMessageHistory from '@/components/chat-message-history'
 import ChatMessage from '@/components/chat-message'
 import { LoadingChatMsg, LoadingChatMsgList } from '@/components/loading-page'
 import { useMount, useLocalStorageState } from 'ahooks'
+import { cn } from '@/lib/utils'
 
 // 获取对话消息记录列表
 const getChatMsgFetch = (url: string) => fetch(url).then((res) => res.json())
@@ -85,6 +86,15 @@ export default function AiBotPage() {
 		}
 	}, [messages])
 
+	const [isRefresh, setIsRefresh] = useState(false)
+	function refresh() {
+		mutate()
+		setIsRefresh(true)
+		setTimeout(() => {
+			setIsRefresh(false)
+		}, 1000)
+	}
+
 	return (
 		<div className='flex-1 overflow-hidden'>
 			<ResizablePanelGroup direction='horizontal'>
@@ -92,14 +102,8 @@ export default function AiBotPage() {
 					<div className='h-full flex flex-col p-2 pb-0'>
 						<div className='flex items-center  gap-2'>
 							<Input disabled placeholder='是的，搜索框还没有做'></Input>
-							<Button
-								title='刷新对话'
-								variant='outline'
-								onClick={() => {
-									mutate()
-								}}
-							>
-								<Loader />
+							<Button title='刷新对话' variant='outline' onClick={refresh}>
+								<Loader className={cn(isRefresh && 'animate-spin')} />
 							</Button>
 							<Button title='新增对话' onClick={newChatMsgFn}>
 								<MessageCirclePlus />
@@ -161,31 +165,30 @@ export default function AiBotPage() {
 										{messages.map((m) => (
 											<ChatMessage key={m.id} message={m} />
 										))}
-										{/* 错误处理状态 */}
-										{error && (
-											<div className='my-2 flex flex-col justify-center items-center'>
-												<div>发生了一些错误，请重试</div>
-												<Button
-													size='sm'
-													variant='destructive'
-													onClick={() => reload()}
-												>
-													Retry
-												</Button>
-											</div>
-										)}
-										{/* 加载中状态 */}
-										{isLoading && (
-											<div className='my-2 flex flex-col justify-center items-center'>
-												<Button size='sm' onClick={() => stop()}>
-													Stop...
-												</Button>
-											</div>
-										)}
 									</div>
 								)}
 							</div>
-
+							{/* 错误处理状态 */}
+							{error && (
+								<div className='my-2 flex flex-col justify-center items-center'>
+									<div>发生了一些错误，请重试</div>
+									<Button
+										size='sm'
+										variant='destructive'
+										onClick={() => reload()}
+									>
+										Retry
+									</Button>
+								</div>
+							)}
+							{/* 加载中状态 */}
+							{isLoading && (
+								<div className='my-2 flex flex-col justify-center items-center'>
+									<Button size='sm' onClick={() => stop()}>
+										Stop...
+									</Button>
+								</div>
+							)}
 							<form onSubmit={handleSubmit} className='flex items-center'>
 								<Input
 									value={input}

@@ -25,19 +25,6 @@ export default function Home() {
 		})
 	}
 
-	/* 传统的useEffect写法
-	const [notes, setNotes] = useState<NoteType[]>([])
-
-	useEffect(() => {
-		fetch('/api/notes', {
-			cache: 'no-store',
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				setNotes(data.note)
-			})
-	}, [])*/
-
 	return (
 		<div className='p-8 '>
 			{isLoading ? (

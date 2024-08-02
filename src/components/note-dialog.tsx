@@ -77,26 +77,6 @@ export default function AddNote({ open, setOpen, noteToEdit }: AddNoteProps) {
 					description: '更新失败！',
 				})
 			}
-			/*  传统写法 狗都不用
-			try {
-				const res = await fetch('/api/notes', {
-					method: 'PUT',
-					body: JSON.stringify({
-						id: noteToEdit?.id,
-						...input,
-					}),
-				})
-				if (res.ok) {
-					setOpen(false)
-					toast({ description: '更新成功！' })
-				}
-			} catch (err) {
-				console.error(err)
-				toast({
-					variant: 'destructive',
-					description: '更新失败！',
-				})
-			}*/
 		} else {
 			try {
 				await add.trigger({ ...input })
@@ -110,24 +90,6 @@ export default function AddNote({ open, setOpen, noteToEdit }: AddNoteProps) {
 					description: '添加失败！',
 				})
 			}
-			/* 对你没看错，狗🐶都不用
-			try {
-				const res = await fetch('/api/notes', {
-					method: 'POST',
-					body: JSON.stringify(input),
-				})
-				form.reset()
-				if (res.ok) {
-					setOpen(false)
-					toast({ description: '添加成功！' })
-				}
-			} catch (err) {
-				console.error(err)
-				toast({
-					variant: 'destructive',
-					description: '添加失败！',
-				})
-			}*/
 		}
 	}
 	const add = useSWRMutation('/api/notes', addNoteFetch)
@@ -172,17 +134,11 @@ export default function AddNote({ open, setOpen, noteToEdit }: AddNoteProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			{/* <DialogTrigger asChild>
-				<Button>
-					<Plus className='sm:mr-1 h-5 w-5' />
-					<span className='hidden sm:inline'>Add Note</span>
-				</Button>
-			</DialogTrigger> */}
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>{noteToEdit ? 'Edit Note' : 'Add Note'} </DialogTitle>
 					<DialogDescription>
-						{noteToEdit ? '编辑你的计划任务表' : '添加你的计划任务表'}
+						{noteToEdit ? '编辑你的记事本' : '添加你的记事本'}
 					</DialogDescription>
 				</DialogHeader>
 				{/* 表单 */}
@@ -193,7 +149,7 @@ export default function AddNote({ open, setOpen, noteToEdit }: AddNoteProps) {
 							name='title'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>计划名称：</FormLabel>
+									<FormLabel>记事名称：</FormLabel>
 									<FormControl>
 										<Input placeholder='输入标题' {...field} />
 									</FormControl>
@@ -207,10 +163,18 @@ export default function AddNote({ open, setOpen, noteToEdit }: AddNoteProps) {
 							name='content'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>计划内容：</FormLabel>
+									<FormLabel>记事内容：</FormLabel>
 									<FormControl>
-										<Textarea rows={6} placeholder='输入内容' {...field} />
+										<Textarea
+											maxLength={300}
+											rows={6}
+											placeholder='输入内容'
+											{...field}
+										/>
 									</FormControl>
+									<p className='text-sm text-muted-foreground'>
+										最大仅支持300字符噢！
+									</p>
 
 									<FormMessage />
 								</FormItem>
