@@ -20,12 +20,28 @@ export async function POST(req: NextRequest) {
 		// OPENAI 逻辑
 		const { messages, chatId } = await req.json()
 		// 获取最好一条数据插入数据库
-		await prisma.message.create({
+		const newMessage = await prisma.message.create({
 			data: {
 				chatId,
 				...messages[messages.length - 1],
 			},
 		})
+		const chat = await prisma.chat.findUnique({
+			where: {
+				id: chatId,
+			},
+		})
+		if (chat?.title === '新对话') {
+			await prisma.chat.update({
+				where: {
+					id: chatId,
+				},
+				data: {
+					title: newMessage.content.substring(0, 20),
+					updatedAt: newMessage.updatedAt,
+				},
+			})
+		}
 
 		//generateText函数生成文本。此函数非常适合需要编写文本的非交互式用例
 		const result = await streamText({

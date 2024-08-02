@@ -9,6 +9,7 @@ import {
 	MessageCirclePlus,
 	MessageCircleDashed,
 	Plus,
+	Loader,
 } from 'lucide-react'
 import useSWR from 'swr'
 import {
@@ -21,6 +22,7 @@ import { MessageHistoryType } from '@/types/chat'
 import ChatMessageHistory from '@/components/chat-message-history'
 import ChatMessage from '@/components/chat-message'
 import { LoadingChatMsg, LoadingChatMsgList } from '@/components/loading-page'
+import { useMount, useLocalStorageState } from 'ahooks'
 
 // 获取对话消息记录列表
 const getChatMsgFetch = (url: string) => fetch(url).then((res) => res.json())
@@ -34,18 +36,18 @@ const getChatFetch = (url: string, { arg }: { arg: { chatId: number } }) => {
 	)
 }
 export default function AiBotPage() {
-	const { data } = useSWR('/api/message', getChatMsgFetch)
-	const newChatMsg = useSWRMutation('/api/message', newChatMsgFetch)
+	const { data, mutate } = useSWR('/api/chatHistory', getChatMsgFetch)
+	const newChatMsg = useSWRMutation('/api/chatHistory', newChatMsgFetch)
 	// 获取具体的对话消息
-	const getChat = useSWRMutation('/api/chatHistory', getChatFetch)
+	const getChat = useSWRMutation('/api/message', getChatFetch)
 	const chatMsgList: MessageHistoryType[] = data?.chatMsg || []
+
 	const [activeMsgId, setActiveMsgId] = useState<number | undefined>(undefined)
 
 	async function clickActiveMsg(chatId: number) {
 		if (chatId === activeMsgId) return
 		setActiveMsgId(chatId)
 		await getChat.trigger({ chatId })
-		//console.log(getChat)
 		setMessages(getChat.data.chatList)
 	}
 	async function newChatMsgFn() {
@@ -68,11 +70,13 @@ export default function AiBotPage() {
 			chatId: activeMsgId,
 		},
 	})
-	// 初始化机器人
-	const msg = {
-		role: 'assistant', //assistant user '你好！有什么我可以帮助你的吗？
-		content: '你好！有什么我可以帮助你的吗？',
-	}
+	// 	// 初始化机器人
+	// 	const msg = {
+	// 		role: 'assistant', //assistant user '你好！有什么我可以帮助你的吗？
+	// 		content: `~~~js
+	// console.log(1)
+	// ~~~`,
+	// 	}
 
 	const scrollRef = useRef<HTMLDivElement>(null)
 	useEffect(() => {
@@ -80,25 +84,32 @@ export default function AiBotPage() {
 			scrollRef.current.scrollTop = scrollRef.current.scrollHeight
 		}
 	}, [messages])
+
 	return (
 		<div className='flex-1 overflow-hidden'>
 			<ResizablePanelGroup direction='horizontal'>
-				<ResizablePanel className='max-w-xs' defaultSize={30}>
+				<ResizablePanel className='max-w-60 sm:max-w-xs' defaultSize={30}>
 					<div className='h-full flex flex-col p-2 pb-0'>
-						<div className='flex items-center'>
-							<Input disabled className='mr-2' placeholder='是的，还没有做' />
+						<div className='flex items-center  gap-2'>
+							<Input disabled placeholder='是的，搜索框还没有做'></Input>
+							<Button
+								title='刷新对话'
+								variant='outline'
+								onClick={() => {
+									mutate()
+								}}
+							>
+								<Loader />
+							</Button>
 							<Button title='新增对话' onClick={newChatMsgFn}>
 								<MessageCirclePlus />
 							</Button>
 						</div>
 
-						{!chatMsgList && (
+						{!chatMsgList.length ? (
 							<div className='flex flex-col items-center mt-4 text-gray-400'>
 								<MessageCircleDashed size={36} /> 暂无对话
 							</div>
-						)}
-						{!chatMsgList.length ? (
-							<LoadingChatMsgList />
 						) : (
 							<div className='overflow-scroll no-scrollbar'>
 								{chatMsgList.map((messageHistory: MessageHistoryType) => {
@@ -136,18 +147,20 @@ export default function AiBotPage() {
 							</Button>
 						</div>
 					) : (
-						<div className='h-full flex flex-col px-8 py-4'>
-							<div className='flex-1 overflow-y-auto no-scrollbar pb-4'>
+						<div className='h-full flex flex-col sm:px-8 p-2'>
+							<div
+								ref={scrollRef}
+								className='flex-1 overflow-y-auto no-scrollbar pb-4'
+							>
 								{getChat.isMutating ? (
 									<LoadingChatMsg />
 								) : (
 									<div>
-										<div ref={scrollRef}>
-											{messages.map((m) => (
-												<ChatMessage key={m.id} message={m} />
-											))}
-										</div>
+										{/* 对话列表 */}
 
+										{messages.map((m) => (
+											<ChatMessage key={m.id} message={m} />
+										))}
 										{/* 错误处理状态 */}
 										{error && (
 											<div className='my-2 flex flex-col justify-center items-center'>

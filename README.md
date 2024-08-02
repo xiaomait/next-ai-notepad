@@ -1,4 +1,5 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+这是一个基于[Next.js](https://nextjs.org/)的 AI 笔记应用-集成了 openai 对话
+个人学习 next 全栈开发，记录笔记，
 
 ## Getting Started
 

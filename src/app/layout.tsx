@@ -5,6 +5,8 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider, useTheme } from 'next-themes'
 import NavBar from '@/components/nav-bar'
 import { Toaster } from '@/components/ui/toaster'
+import { Suspense } from 'react'
+import Loading from './loading'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -29,6 +31,7 @@ export default function RootLayout({
 					>
 						<div className='h-screen flex flex-col'>
 							<NavBar />
+							<Suspense fallback={<Loading />}></Suspense>
 							{children}
 						</div>
 					</ClerkProvider>

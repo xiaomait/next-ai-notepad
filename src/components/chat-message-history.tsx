@@ -35,8 +35,8 @@ export default function ChatMessageHistory({
 	activeMsgId: number | undefined
 }) {
 	const time = formatTime(messageHistory?.updatedAt)
-	const delChatMsg = useSWRMutation('/api/message', delChatMsgFetch)
-	const updateChatMsg = useSWRMutation('/api/message', updateChatMsgFetch)
+	const delChatMsg = useSWRMutation('/api/chatHistory', delChatMsgFetch)
+	const updateChatMsg = useSWRMutation('/api/chatHistory', updateChatMsgFetch)
 
 	const [open, setOpen] = useState(false)
 	const [chatTitle, setChatTitle] = useState(messageHistory.title)
@@ -45,12 +45,15 @@ export default function ChatMessageHistory({
 		<div
 			className={cn(
 				'flex items-center border-2  rounded-md p-2 mt-2',
-				activeMsgId == messageHistory.id && 'border-primary bg-gray-200'
+				activeMsgId == messageHistory.id &&
+					'border-primary bg-gray-200 dark:bg-gray-700'
 			)}
 		>
 			<Bot className='shrink-0 mr-2 h-10 w-10' />
 			<div className='flex-1'>
-				<div className='text-base'>{messageHistory.title}</div>
+				<div className='w-[200px] text-base overflow-hidden text-ellipsis whitespace-nowrap'>
+					{messageHistory.title}
+				</div>
 				<div className='text-xs text-gray-500'>{time}</div>
 			</div>
 
@@ -62,7 +65,14 @@ export default function ChatMessageHistory({
 				</HoverCardTrigger>
 				<HoverCardContent className='w-36 flex flex-col'>
 					{/* 修改标题 */}
-					<Button size='sm' variant='ghost' onClick={() => setOpen(true)}>
+					<Button
+						size='sm'
+						variant='ghost'
+						onClick={(e) => {
+							setOpen(true)
+							e.stopPropagation()
+						}}
+					>
 						<Edit className='h-4 w-4 mr-1' /> 修改标题
 					</Button>
 					<Dialog open={open} onOpenChange={setOpen}>
@@ -79,7 +89,8 @@ export default function ChatMessageHistory({
 							/>
 							<DialogFooter>
 								<Button
-									onClick={() => {
+									onClick={(e) => {
+										e.stopPropagation()
 										if (
 											chatTitle.trim() === '' ||
 											chatTitle == messageHistory.title
@@ -101,11 +112,13 @@ export default function ChatMessageHistory({
 					{/* 删除对话 */}
 					<Button
 						variant='ghost'
-						onClick={() => {
+						size='sm'
+						onClick={(e) => {
+							e.stopPropagation()
 							delChatMsg.trigger({ id: messageHistory.id })
 						}}
 					>
-						<MessageCircleX size='sm' className='h-4 w-4 mr-1' />
+						<MessageCircleX className='h-4 w-4 mr-1' />
 						删除对话
 					</Button>
 				</HoverCardContent>

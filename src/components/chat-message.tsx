@@ -18,8 +18,7 @@ export default function ChatMessage({
 			{isAiMessage ? (
 				<div className='flex'>
 					<Bot className='shrink-0 mr-2 h-10 w-10' />
-					<div className='whitespace-break-spaces border px-3 py-2 rounded-md'>
-						{/* {content} */}
+					<div className='max-w-2xl  border px-3 py-2 rounded-md'>
 						<MarkdownRenderer markdown={content} />
 					</div>
 				</div>
@@ -28,7 +27,7 @@ export default function ChatMessage({
 					<Avatar className='shrink-0 ml-2'>
 						<AvatarImage src={user?.imageUrl} />
 					</Avatar>
-					<div className='whitespace-break-spaces border px-3 py-2 rounded-md bg-primary text-white dark:text-black'>
+					<div className='max-w-2xl  border px-3 py-2 rounded-md bg-primary text-white dark:text-black'>
 						<MarkdownRenderer markdown={content} />
 					</div>
 				</div>
