@@ -9,7 +9,7 @@ export default function AiBot() {
 			<Button>
 				<Link className='flex' href='/ai-bot'>
 					<Bot className='sm:mr-1 h-5 w-5' />
-					<span className='hidden sm:inline'>AI Bot</span>{' '}
+					<span className='hidden sm:inline'>AI Bot</span>
 				</Link>
 			</Button>
 		</div>

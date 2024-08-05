@@ -16,7 +16,20 @@ export default function NavBar() {
 		<>
 			<div className='min-w-full px-8 py-3 shadow flex justify-between items-center dark:border-sky-100 dark:border-b'>
 				<Link href='/' className='flex items-center flex-1'>
-					<Image src='/logo.png' alt='logo' width={40} height={40} />
+					<Image
+						className='dark:hidden'
+						src='/logo.png'
+						alt='logo'
+						width={40}
+						height={40}
+					/>
+					<Image
+						className='hidden dark:block'
+						src='/dark_logo.png'
+						alt='logo'
+						width={40}
+						height={40}
+					/>
 					<span className='hidden sm:inline-block text-2xl font-bold ml-2'>
 						NotePad
 					</span>
@@ -28,11 +41,11 @@ export default function NavBar() {
 						</Button>
 					</SignedOut>
 					<SignedIn>
-						<AiBot />
 						<Button onClick={() => setOpen(true)}>
 							<Plus className='sm:mr-1 h-5 w-5' />
 							<span className='hidden sm:inline'>Add Note</span>
 						</Button>
+						<AiBot />
 						<UserButton />
 					</SignedIn>
 					<ModeToggle />

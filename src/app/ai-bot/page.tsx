@@ -141,12 +141,12 @@ export default function AiBotPage() {
 					{!activeMsgId ? (
 						<div className='h-full flex flex-col justify-center items-center px-8 py-4'>
 							<Image
-								src={'/add_chat.png'}
+								src={'/add_chat.svg'}
 								alt='添加对话'
 								width={500}
 								height={500}
 							/>
-							<Button onClick={newChatMsgFn}>
+							<Button className='mt-4' onClick={newChatMsgFn}>
 								<Plus /> 新增对话
 							</Button>
 						</div>
